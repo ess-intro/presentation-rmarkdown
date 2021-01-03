@@ -1,0 +1,99 @@
+---
+categories: 
+- tutorials
+excerpt: "Emacs for R Programming: RMarkdown"
+date: "2021-01-03"
+tags: 
+- emacs
+- programming
+- bioinformatics
+- R
+- RMarkdown
+title: "Getting Started with R Programming in Emacs: RMarkdown"
+slug: emacs-tutorial-rmarkdown
+author: "Tyler Smith"
+---
+
+Emacs provides full support for editing
+[RMarkdown](https://rmarkdown.rstudio.com/) documents. RMarkdown has
+extensive documentation, both at the previous RStudio link, and several
+free online books by Xie et al. (notably [R Markdown: The Definitive
+Guide](https://bookdown.org/yihui/rmarkdown/), but also several others
+listed on [Yihui Xie's Bookdown
+page](https://bookdown.org/yihui/rmarkdown/)).
+
+Most of these references assume you are using the
+[RStudio](https://rstudio.com/) development environment. The purpose of
+this tutorial is to get you started editin RMarkdown documents in Emacs.
+
+# Installation
+
+## Prerequisites
+
+You need to have [R](https://www.r-project.org/) installed, of course. You
+will also need [Pandoc](https://pandoc.org/) in order to take full
+advantage of all the output options available. If you want to create PDF
+documents, you'll need [LaTeX](https://www.latex-project.org/) as well. 
+
+All three of these programs are provided in the package repositories for
+most major Linux distributions. See the links above for instructions for
+installing on Windows or Apple computers.
+
+You will also need to install the `rmarkdown` R package. You can do this
+from within R via:
+
+```{R rmarkdown install, eval = FALSE}
+install.packages("rmarkdown")
+```
+
+This will also install the other R requirements, notably the `knitr`
+package. 
+
+The `bookdown` package provides some more advanced citation features. I
+won't discuss them in this short tutorial.
+
+## Emacs Packages
+
+We need a few additional Emacs packages to comfortably edit RMarkdown
+documents. These are:
+
+[Markdown Mode](https://github.com/jrblevin/markdown-mode)
+
+: The major mode for editing files in markdown format
+
+[ESS](https://ess.r-project.org/ "ESS")
+
+: The collection of modes for editing R code, and interacting with the R
+  program. 
+
+[poly-R (Polymode)](https://polymode.github.io/)
+
+: `polymode` is a 'glue' mode. The `poly-R` variant extends markdown mode
+  to allow us to edit embedded code snippets in R (and other languages too)
+  
+  (`poly-R` also supports files in `.Rnw` format, which mix LaTeX and R
+  code. We won't cover that here)
+
+  `polymode` started out as a collection of modes to support files with
+  different combinations of languages. As it has grown, many of those
+  different modes have been split out into separate packages. When we
+  install `poly-R`, it will automatically install the core of the
+  `polymode` system for us.
+  
+As in previous tutorials, we can install all three of these packages from
+[MELPA](https://melpa.org/#/).
+
+Once we have the required packages installed, no further configuration
+should be necessary. When we next open a file with a `.Rmd` extension,
+Emacs will know to use the `poly-markdown+R-mode` for these files. If
+everything is working properly, you'll see `Markdown PM-Rmd` in the
+modeline at the bottom of the window for these files, and `Markdown`,
+`RMarkdown`, and `Polymode` menus at the top of Emacs frame.
+
+
+
+
+# RMarkdown
+## Editing Markdown
+## Working with R Code
+## Exporting RMarkdown

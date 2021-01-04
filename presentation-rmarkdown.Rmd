@@ -3,6 +3,7 @@ categories:
 - tutorials
 excerpt: "Emacs for R Programming: RMarkdown"
 date: "2021-01-03"
+updated: 2021-01-04
 tags: 
 - emacs
 - programming
@@ -24,7 +25,7 @@ page](https://bookdown.org/yihui/rmarkdown/)).
 
 Most of these references assume you are using the
 [RStudio](https://rstudio.com/) development environment. The purpose of
-this tutorial is to get you started editin RMarkdown documents in Emacs.
+this tutorial is to get you started editing RMarkdown documents in Emacs.
 
 # Installation
 
@@ -46,11 +47,12 @@ from within R via:
 install.packages("rmarkdown")
 ```
 
-This will also install the other R requirements, notably the `knitr`
-package. 
+This will also install the other R requirements, notably the
+[knitr](https://yihui.org/knitr/) package.
 
-The `bookdown` package provides some more advanced citation features. I
-won't discuss them in this short tutorial.
+The [bookdown](https://bookdown.org/yihui/rmarkdown/) package provides some
+more advanced citation features. I won't discuss them in this short
+tutorial.
 
 ## Emacs Packages
 
@@ -90,10 +92,191 @@ everything is working properly, you'll see `Markdown PM-Rmd` in the
 modeline at the bottom of the window for these files, and `Markdown`,
 `RMarkdown`, and `Polymode` menus at the top of Emacs frame.
 
-
-
-
 # RMarkdown
+
 ## Editing Markdown
+
+[Markdown syntax](https://www.markdownguide.org/basic-syntax/) is designed
+to be easily entered by hand, which means if you're already familiar with
+the format you can just get going. Markdown mode will provide you with
+syntax highlighing automatically:
+
+![A Markdown Mode buffer showing syntax highlighting](markdown-mode.jpg)
+
+Of course, there are lots of shortcuts available. You can explore the most
+frequently used in the `Markdown` menu. I'll summarize some of the main
+ones here to get you started.
+
+### Headings
+
+Markdown has two different kinds of headings. The "Atx" style uses `#`
+symbols at the beginning of the heading, and, optionally, also at the end:
+
+```
+
+# Heading Level 1
+
+## Heading Level 2 ##
+
+```
+
+You can insert these headings with the following commands:
+
+`C-c C-s h`
+
+: insert a heading at the same level as the previous heading.
+
+  If the `region` is active, the contents of the region will be used as the
+  header text. If `point` is on a line with text, the line will be
+  converted into a header. Otherwise, an empty header will be created. 
+
+`C-c C-s {1-9}`
+
+: insert a heading at the specified level. i.e., `C-c C-s 3` inserts a
+  third-level heading. `region` and `point` can be used to set the heading
+  text as for the previous.
+  
+You can manipulate headings with the following commands:
+
+`C-c <up>` and `C-c <down>`
+
+: move a heading and all of its content up or down in the document.
+
+  ie., turn this:
+  
+  ![Markdown headings in original order](markdown-move1.jpg)
+  
+  into this:
+  
+  ![Markdown headings with subheading 2 ahead of subheading 1](markdown-move2.jpg)
+
+
+`C-c <left>` and `C-c <right>`
+
+: promote or demote a heading.
+
+  i.e., turn this:
+
+  ![Markdown headings in hierarchy](markdown-move1.jpg)
+  
+  into this (and vice versa):
+  
+  ![Markdown with subheading 2 demoted ](demotion.jpg)
+  
+If you prefer asymmetric headings (i.e., with `#` symbols only at the
+beginning of the line), you can configue this by setting the variable
+`markdown-asymmetric-header` to `t`:
+
+```{elisp}
+;; set in your ~/.emacs or ~/.emacs.d/init.el
+(setq markdown-asymmetric-header t)
+```
+
+Alternatively, you can do this via `M-x customize-variable
+markdown-asymmetric-header`. 
+
+Markdown mode also supports the `setext` style headings:
+
+``` 
+
+Heading Level 1
+===============
+
+Heading Level 2
+---------------
+
+```
+
+Only two levels are supported, which you can insert automatically with the
+commands `C-c C-s !` (level 1) and `C-c C-s @`.
+
+#### Heading Navigation
+
+You can move from heading to heading with the following commands:
+
+`C-c C-n` and `C-c C-p`
+
+: move to next and previous headings 
+
+`C-c C-f` and `C-c C-b`
+
+: move forward and backward to headings at the same level
+
+`C-c C-u`
+
+: move up to parent heading
+
+
+#### Heading Visibility
+
+You can hide and show different sections in documents by pressing the
+`<TAB>` key with point on a heading. For example, with point on the `#
+Installation` heading, when I press `<TAB>` I move from this:
+
+![Markdown buffer with all sections visible](unhidden.jpg)
+
+to this:
+
+![Markdown buffer with the Installation section hidden](hidden.jpg)
+
+This doesn't change any of the text in your file, it only hides the parts
+you don't want to see. Repeatedly pressing the `<TAB>` key will toggle
+through the various levels of hiding and showing.
+
+If you want to toggle all the headings at once, `Shift-<TAB>` will toggle
+visibility for all headings at once. You can use this to collapse your
+entire document to a table of contents:
+
+![A Markdown buffer with only headings visible](toc.jpg)
+
+### Links and Images
+
+Inserting links is done with `C-c C-l`. Emacs will first prompt you for the
+link URL, followed by the link text, and finally the tooltip text. Only the
+URL is required. To open a link from Emacs, use `C-c C-o`, which will take
+you to the webpage in your browser.
+
+Images are handled similarly, and are inserted with `C-c <TAB>` or `C-c
+C-i`. The URL can be a web resource (e.g.,
+`https://my-images.ca/image1.jpg`), or a local file (e.g.,
+`./images/image1.jpg`). The image will appear as:
+
+```
+![Image Caption](image URL)
+```
+
+You can toggle displaying the actual image in the buffer with `C-c C-x C-i`.
+
+### Tables
+
+To insert a new table, use the command `C-c C-s t`. You will be prompted
+for the number of rows and columns, and the alignment you want. When you're
+done, you'll have a proper markdown table ready to edit:
+
+```
+|   |   |   |   |
+|---|---|---|---|
+|   |   |   |   |
+|   |   |   |   |
+|   |   |   |   |
+
+```
+
+With point in any of the cells, you can `<TAB>` into the next cell, or
+`Shift-<TAB>` into the previous cell. Each time you hit tab the cells will
+resize automatically to accomodate your text.
+
+Additional commands are available for moving, adding and deleting rows and
+columns; see the `Markdown -> Tables` menu the options.
+
+### Other Markup
+
+Markdown mode also provides shortcuts for other markup elements. See the
+`Markdown` menu for some of the options. I find most of the basics (bold,
+emphasis, unordered lists) are just as fast to type by hand as they are to
+insert using shortcuts.
+
 ## Working with R Code
+
+
 ## Exporting RMarkdown

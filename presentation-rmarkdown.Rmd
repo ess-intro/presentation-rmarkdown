@@ -3,7 +3,7 @@ categories:
 - tutorials
 excerpt: "Emacs for R Programming: RMarkdown"
 date: "2021-01-03"
-updated: 2021-01-04
+updated: 2021-01-22
 tags: 
 - emacs
 - programming
@@ -13,7 +13,13 @@ tags:
 title: "Getting Started with R Programming in Emacs: RMarkdown"
 slug: emacs-tutorial-rmarkdown
 author: "Tyler Smith"
+output: 
+  pdf_document:
+    extra_dependencies: ["float"]
+    keep_tex: true
 ---
+
+\floatplacement{figure}{H}
 
 Emacs provides full support for editing
 [RMarkdown](https://rmarkdown.rstudio.com/) documents. RMarkdown has
@@ -92,6 +98,44 @@ everything is working properly, you'll see `Markdown PM-Rmd` in the
 modeline at the bottom of the window for these files, and `Markdown`,
 `RMarkdown`, and `Polymode` menus at the top of Emacs frame.
 
+### Github Flavoured Markdown and Code Blocks
+
+Markdown mode supports several different options for code blocks. To take
+full advantage of the RMarkdown support provided by the `rmarkdown` R
+package, we need to use fenced code blocks, along with language strings
+wrapped in braces[^1]. I'll explain this in more detail below.
+
+This variant of markdown is referred to as "Github Flavoured Markdown", and
+the `markdown-mode` package provides `gfm-mode` with a few extra features
+particular to it. Turning on `gfm-mode` requires a some extra configuration
+to set up.[^2] To do so, add the following to your Emacs configuration:
+
+```{lisp, eval = FALSE}
+(require 'poly-R) ;; make sure poly-R is loaded
+
+;; define the gfm polymode:
+(define-polymode poly-gfm+r-mode poly-gfm-mode :lighter " PGFM-Rmd"
+  :innermodes '(:inherit poly-r-markdown-inline-code-innermode))
+
+;; associate the new polymode to Rmd files:
+(add-to-list 'auto-mode-alist
+             '("\\.[rR]md\\'" . poly-gfm+r-mode))
+
+;; register the exporters for our new polymode (same as for poly-r-markdown)
+(polymode-register-exporter poly-r-markdown-ess-exporter nil
+                            poly-gfm+r-polymode)
+(polymode-registerj-exporter poly-r-markdown-exporter nil
+                            poly-gfm+r-polymode)
+
+;; uses braces around code block language strings:
+(setq markdown-code-block-braces t)
+```
+
+This will switch you from using `poly-markdown+R-mode` to
+`poly-gfm+r-mode`, which shows up in your mode bar as "PGFM-Rmd". It's
+nearly identical, the main differences being the support for fenced code
+blocks. 
+
 # RMarkdown
 
 ## Editing Markdown
@@ -167,7 +211,7 @@ If you prefer asymmetric headings (i.e., with `#` symbols only at the
 beginning of the line), you can configue this by setting the variable
 `markdown-asymmetric-header` to `t`:
 
-```{elisp}
+```{lisp, eval = FALSE}
 ;; set in your ~/.emacs or ~/.emacs.d/init.el
 (setq markdown-asymmetric-header t)
 ```
@@ -188,7 +232,7 @@ Heading Level 2
 ```
 
 Only two levels are supported, which you can insert automatically with the
-commands `C-c C-s !` (level 1) and `C-c C-s @`.
+commands `C-c C-s !` (level 1) and `C-c C-s @` (level 2).
 
 #### Heading Navigation
 
@@ -277,6 +321,102 @@ emphasis, unordered lists) are just as fast to type by hand as they are to
 insert using shortcuts.
 
 ## Working with R Code
+`rmarkdown` uses fenced code blocks with braces around the language string. i.e.,:
 
+```{R code-block-example}`r ''
+## R code goes here!
+1 + 1
+```
+
+If you've set up `gfm-mode` as described above, you can create one of these
+code blocks with the command `markdown-insert-gfm-code-block`, bound to
+`C-c C-s C` by default. Alternatively, simply entering three "`" characters
+at the beginning of a line will call the function for you[^3]. Either way,
+you'll be prompted for the language of the code block (which will be R most
+of the time, but you can use others!). You can also add a label for the
+code block at the prompt, and any additional options you want to use for
+the chunk. You can also add options later if you change your mind.[^4]
+
+Once you have created a code block, `polymode` will work its magic. You can
+continue to edit the markdown portions of your document, with all the
+features of `gfm-mode`. But when point is in an R code block, you'll be
+editing it in `ESS[R]` mode. That allows you to use all the features of
+that package (see
+[plantarum.ca](https://plantarum.ca/tutorials/emacs-tutorial-03/) for a
+quick tutorial/refresher).
+
+Polymode provides some additional conveniences:
+
+### Navigation
+
+`polymod-next-chunk`/`polymode-previous-chunk`, bound to `M-n C-n` and `M-n
+C-p`
+
+: move to the next/previous chunk. i.e., move from an RMarkdown chunk to
+  the next R code chunk.
+
+`polymod-next-chunk-same-type`/`polymode-previous-chunk-same-type`, bound
+to `M-n M-C-n` and `M-n M-C-p`
+
+: move to the next/previous chunk of the same type. i.e., move from one R
+  code chunk the next R code chunk.
+  
+`polymode-kill-chunk`, bound to `M-n M-k`
+
+: kill the current chunk
+
+`polymode-toggle-chunk-narrowing`, bound to `M-n C-t`
+
+: toggle narrowing the buffer to display only the current chunk, or to
+  display the entire document
+
+### Evaluation
+
+`polymode-eval-region-or-chunk`, bound to `M-n v`
+
+: evaluate all code chunks in the active region, or the chunk at point if there
+  is no active region
+  
+`polymode-eval-buffer`, bound to `M-n b`
+
+`polymode-eval-buffer-from-beg-to-point`/`polymode-eval-buffer-from-point-to-end`,
+bound to `M-n u` or `M-n ↑`, and `M-n d` or `M-n ↓`
+
+: evaluate all code chunks from the beginning of the buffer to point (`u`
+and `↑`), or from point to the end of the buffer (`d` and `↓`)
 
 ## Exporting RMarkdown
+
+The most important 'convenience' of `polymode` is that it connects Emacs to
+the programs used to export RMarkdown files to presentation formats (i.e.,
+pdf, html, slides). The main function you need for this is
+`polymode-export`, bound to `M-n e`. 
+
+The first time you run this, you'll be asked which exporter you would like
+to use. There are two choices, `markdown` and `markdown-ess`. `markdown`
+means `polymode` will start a new, self-contained R process and compile
+your file there. When compilation is finished, the process will be closed.
+
+`markdown-ess` will use an existing R process, or start a new one if there
+isn't an active process available. When compilation is complete, the R
+process remains active. This allows you to check the values of various
+objects interactively. This can be useful as you develop a new script. 
+
+RMarkdown files can be compiled to produce a variety of output formats. You
+will be prompted to select which one you want the first time you run the
+exporter. `polymode` remembers this setting, so you don't get prompted a
+second time. If you want to switch, say from pdf output to html, you can
+reset the target via `C-u M-n e`.
+
+[^1]: [Feature added 6 January
+2021](https://github.com/jrblevin/markdown-mode/pull/581). 
+
+[^2]: I am working on getting these changes incorporated into
+[poly-R](https://github.com/polymode/poly-R/issues/21). I'll update this
+tutorial when that is settled. 
+
+[^3]: By default; you can turn this feature off by setting the variable
+`markdown-gfm-use-electric-backquote` to nil.
+
+[^4]: I'm working on tab-completion for R chunk options, but haven't
+    decided how best to set it up yet. Watch this space!

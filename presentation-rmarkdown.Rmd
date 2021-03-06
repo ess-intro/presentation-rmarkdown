@@ -124,7 +124,7 @@ to set up.[^2] To do so, add the following to your Emacs configuration:
 ;; register the exporters for our new polymode (same as for poly-r-markdown)
 (polymode-register-exporter poly-r-markdown-ess-exporter nil
                             poly-gfm+r-polymode)
-(polymode-registerj-exporter poly-r-markdown-exporter nil
+(polymode-register-exporter poly-r-markdown-exporter nil
                             poly-gfm+r-polymode)
 
 ;; uses braces around code block language strings:

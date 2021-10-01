@@ -3,7 +3,7 @@ categories:
 - tutorials
 excerpt: "Emacs for R Programming: RMarkdown"
 date: "2021-01-03"
-updated: 2021-01-22
+updated: 2021-10-01
 tags: 
 - emacs
 - programming
@@ -58,7 +58,11 @@ This will also install the other R requirements, notably the
 
 The [bookdown](https://bookdown.org/yihui/rmarkdown/) package provides some
 more advanced citation features. I won't discuss them in this short
-tutorial.
+tutorial, but in order to use them you need to install that package too:
+
+```{R rmarkdown install, eval = FALSE}
+install.packages("bookdown")
+```
 
 ## Emacs Packages
 
@@ -67,7 +71,8 @@ documents. These are:
 
 [Markdown Mode](https://github.com/jrblevin/markdown-mode)
 
-: The major mode for editing files in markdown format
+: The major mode for editing files in markdown format. **This tutorial uses
+  features added after 6 January 2021.**
 
 [ESS](https://ess.r-project.org/ "ESS")
 
@@ -88,6 +93,8 @@ documents. These are:
   install `poly-R`, it will automatically install the core of the
   `polymode` system for us.
   
+  **This tutorial uses features added after 29 September 2021.**
+  
 As in previous tutorials, we can install all three of these packages from
 [MELPA](https://melpa.org/#/).
 
@@ -107,34 +114,27 @@ wrapped in braces[^1]. I'll explain this in more detail below.
 
 This variant of markdown is referred to as "Github Flavoured Markdown", and
 the `markdown-mode` package provides `gfm-mode` with a few extra features
-particular to it. Turning on `gfm-mode` requires a some extra configuration
-to set up.[^2] To do so, add the following to your Emacs configuration:
+particular to it. Turning on `gfm-mode` for Rmd files requires the
+following line in your Emacs configuration to turn it on[^2]:
 
 ```{lisp, eval = FALSE}
-(require 'poly-R) ;; make sure poly-R is loaded
-
-;; define the gfm polymode:
-(define-polymode poly-gfm+r-mode poly-gfm-mode :lighter " PGFM-Rmd"
-  :innermodes '(:inherit poly-r-markdown-inline-code-innermode))
-
 ;; associate the new polymode to Rmd files:
 (add-to-list 'auto-mode-alist
              '("\\.[rR]md\\'" . poly-gfm+r-mode))
+```
 
-;; register the exporters for our new polymode (same as for poly-r-markdown)
-(polymode-register-exporter poly-r-markdown-ess-exporter nil
-                            poly-gfm+r-polymode)
-(polymode-registerj-exporter poly-r-markdown-exporter nil
-                            poly-gfm+r-polymode)
+You will also need the following line, if you want `gfm-mode` to
+automatically insert braces for code blocks (described below):
 
+```{lisp, eval = FALSE}
 ;; uses braces around code block language strings:
 (setq markdown-code-block-braces t)
 ```
 
 This will switch you from using `poly-markdown+R-mode` to
-`poly-gfm+r-mode`, which shows up in your mode bar as "PGFM-Rmd". It's
-nearly identical, the main differences being the support for fenced code
-blocks. 
+`poly-gfm+r-mode`, which shows up in your mode bar as "PM-Rmd(gfm)". It's
+nearly similar, the main differences being the support for fenced code
+blocks.
 
 # RMarkdown
 
@@ -327,7 +327,7 @@ insert using shortcuts.
 ## R code goes here!
 1 + 1
 ```
-
+    
 If you've set up `gfm-mode` as described above, you can create one of these
 code blocks with the command `markdown-insert-gfm-code-block`, bound to
 `C-c C-s C` by default. Alternatively, simply entering three "`" characters
@@ -411,12 +411,11 @@ reset the target via `C-u M-n e`.
 [^1]: [Feature added 6 January
 2021](https://github.com/jrblevin/markdown-mode/pull/581). 
 
-[^2]: I am working on getting these changes incorporated into
-[poly-R](https://github.com/polymode/poly-R/issues/21). I'll update this
-tutorial when that is settled. 
+[^2]: [Feature added 29 September
+    2021](https://github.com/polymode/poly-R/pull/27)
 
 [^3]: By default; you can turn this feature off by setting the variable
 `markdown-gfm-use-electric-backquote` to nil.
 
 [^4]: I'm working on tab-completion for R chunk options, but haven't
-    decided how best to set it up yet. Watch this space!
+decided how best to set it up yet. Watch this space!

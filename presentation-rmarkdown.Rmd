@@ -95,9 +95,10 @@ documents. These are:
   
   **This tutorial uses features added after 29 September 2021.**
   
-As in [previous
-tutorials](https://plantarum.ca/2020/12/30/emacs-tutorial-03/), we can
-install all three of these packages from [MELPA](https://melpa.org/#/).
+As in previous tutorials, (see [my
+blog](https://plantarum.ca/2020/12/30/emacs-tutorial-03/) or the [demo on
+Youtube](https://www.youtube.com/watch?v=So1LYzSk9o0)), we can install all
+three of these packages from [MELPA](https://melpa.org/#/).
 
 Once we have the required packages installed, no further configuration
 should be necessary. When we next open a file with a `.Rmd` extension,

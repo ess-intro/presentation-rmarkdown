@@ -3,7 +3,7 @@ categories:
 - tutorials
 excerpt: "Emacs for R Programming: RMarkdown"
 date: "2021-01-03"
-updated: 2021-10-01
+updated: 2021-10-03
 tags: 
 - emacs
 - programming
@@ -60,7 +60,7 @@ The [bookdown](https://bookdown.org/yihui/rmarkdown/) package provides some
 more advanced citation features. I won't discuss them in this short
 tutorial, but in order to use them you need to install that package too:
 
-```{R rmarkdown install, eval = FALSE}
+```{R bookdown install, eval = FALSE}
 install.packages("bookdown")
 ```
 
@@ -95,8 +95,9 @@ documents. These are:
   
   **This tutorial uses features added after 29 September 2021.**
   
-As in previous tutorials, we can install all three of these packages from
-[MELPA](https://melpa.org/#/).
+As in [previous
+tutorials](https://plantarum.ca/2020/12/30/emacs-tutorial-03/), we can
+install all three of these packages from [MELPA](https://melpa.org/#/).
 
 Once we have the required packages installed, no further configuration
 should be necessary. When we next open a file with a `.Rmd` extension,
